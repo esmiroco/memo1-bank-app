@@ -70,5 +70,5 @@ public class AccountOperationsTest extends AccountIntegrationServiceTest {
     @After
     public void tearDown() {
         System.out.println("After all test execution");
-    }
+}
 }

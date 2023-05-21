@@ -5,8 +5,8 @@ import javax.persistence.*;
 @Entity
 public class Account {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id // esta es la primary key (base de datos relacional)
+    @GeneratedValue(strategy = GenerationType.AUTO) // auto generado cada vez que se cree una cuenta
     private Long cbu;
 
     private Double balance;
@@ -34,4 +34,17 @@ public class Account {
         this.balance = balance;
     }
 
+    public void withdraw(Double amount) {
+        this.balance -= amount;
+    }
+
+    public void deposit(Double amount) {
+        if(amount<2000){
+            this.balance += amount;
+        }else if((2000 <= amount) && (amount <= 5000)){
+            this.balance += amount*1.1;
+        }else{
+            this.balance += amount + 500;
+        }
+    }
 }

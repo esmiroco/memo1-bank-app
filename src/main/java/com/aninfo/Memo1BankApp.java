@@ -1,7 +1,9 @@
 package com.aninfo;
 
 import com.aninfo.model.Account;
+import com.aninfo.model.Transaction;
 import com.aninfo.service.AccountService;
+import com.aninfo.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -26,6 +29,10 @@ public class Memo1BankApp {
 
 	@Autowired
 	private AccountService accountService;
+
+	@Autowired
+	private TransactionService transactionService;
+
 
 	public static void main(String[] args) {
 		SpringApplication.run(Memo1BankApp.class, args);
@@ -82,5 +89,27 @@ public class Memo1BankApp {
 			.apis(RequestHandlerSelectors.any())
 			.paths(PathSelectors.any())
 			.build();
+	}
+
+	@GetMapping("/transactions/cbu/{cbu}")
+	public ResponseEntity<List<Transaction>> getTransactionsByCbu(@PathVariable Long cbu) {
+		List<Transaction> transactions = transactionService.getTransactionsByCbu(cbu);
+		return ResponseEntity.ok(transactions);
+	}
+
+	@GetMapping("/transactions/{id}")
+	public ResponseEntity<Transaction> getTransactionById(@PathVariable Long id) {
+		Optional<Transaction> transactionOptional = transactionService.getTransactionById(id);
+		return transactionOptional.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+	}
+
+	@DeleteMapping("/transactions/{id}")
+	public ResponseEntity<Void> deleteTransactionById(@PathVariable Long id) {
+		Optional<Transaction> transactionOptional = transactionService.getTransactionById(id);
+		if (transactionOptional.isPresent()) {
+			transactionService.deleteTransactionById(id);
+			return ResponseEntity.noContent().build();
+		}
+		return ResponseEntity.notFound().build();
 	}
 }
